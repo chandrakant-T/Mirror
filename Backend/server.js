@@ -10,7 +10,12 @@ const PORT = process.env.PORT || 3000;
 const app = express();
 
 app.use(express.json());
-app.use(cors({ origin: "http://localhost:5173" }));
+app.use(cors({
+    origin: [
+        "http://localhost:5173",
+        "https://mirror-frontend-lyart.vercel.app"
+    ]
+}))
 
 app.get('/', (req, res) => {
     res.send("Welcome to Mirror Compiler");
