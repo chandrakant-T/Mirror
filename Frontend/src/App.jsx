@@ -1,6 +1,7 @@
 import { useRef, useState, useEffect } from "react";
 import Editor from "@monaco-editor/react";
 import useCodeSubmit from "./hooks/useCodeSubmit";
+import mirrorLogo from "./assets/logo.svg"; 
 
 const ALL_LANGUAGES = [
   { id: 45, name: "Assembly (NASM 2.14.02)", monacoLang: "plaintext" },
@@ -665,12 +666,16 @@ function handleResizerMouseDown(e) {
           className="h-11 flex items-center justify-center shrink-0"
           style={{ borderBottom: `1px solid ${BG.border}` }}
         >
-          <span
-            className="text-[13px] font-black tracking-tighter"
-            style={{ color: "#e2e8f0" }}
-          >
-            T<span style={{ color: "#22d3ee" }}>/</span>M
-          </span>
+          <img
+  src={mirrorLogo}
+  alt="Mirror"
+  style={{
+  width: "28px",
+  height: "28px",
+  objectFit: "contain",
+  filter: "hue-rotate(10deg) saturate(1.4)",
+}}
+/>
         </div>
 
         <nav
