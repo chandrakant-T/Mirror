@@ -749,20 +749,20 @@ export default function App() {
               onClick={() => setShowStdin((v) => !v)}
               className="text-[10px] px-2.5 py-1 rounded transition-all duration-150 font-mono"
               style={{
-                color: showStdin ? "#22d3ee" : "#2e2e45",
-                border: `1px solid ${showStdin ? "#22d3ee40" : "#1e1e2e"}`,
+                color: showStdin ? "#22d3ee" : "#94a3b8",
+                border: `1px solid ${showStdin ? "#22d3ee40" : "#94a3b830"}`,
                 background: showStdin ? "#22d3ee0d" : "transparent",
               }}
               onMouseEnter={(e) => {
                 if (!showStdin) {
-                  e.currentTarget.style.color = "#4a4a6a";
-                  e.currentTarget.style.borderColor = "#2a2a3e";
+                  e.currentTarget.style.color = "#cbd5e1";
+                  e.currentTarget.style.borderColor = "#94a3b850";
                 }
               }}
               onMouseLeave={(e) => {
                 if (!showStdin) {
-                  e.currentTarget.style.color = "#2e2e45";
-                  e.currentTarget.style.borderColor = "#1e1e2e";
+                  e.currentTarget.style.color = "#94a3b8";
+                  e.currentTarget.style.borderColor = "#94a3b830";
                 }
               }}
             >
@@ -882,7 +882,7 @@ export default function App() {
         >
           <span
             className="text-[10px] font-bold tracking-[0.25em] uppercase"
-            style={{ color: "#1e1e30" }}
+            style={{ color: "#94a3b8" }}
           >
             Terminal
           </span>
