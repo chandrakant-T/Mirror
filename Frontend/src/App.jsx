@@ -580,6 +580,33 @@ export default function App() {
 
   const { output, loading, error, submitCode } = useCodeSubmit();
 
+const [terminalWidth, setTerminalWidth] = useState(42);
+const isResizing = useRef(false);
+
+function handleResizerMouseDown(e) {
+  isResizing.current = true;
+  document.body.style.cursor = "col-resize";
+  document.body.style.userSelect = "none";
+
+  function onMouseMove(e) {
+    if (!isResizing.current) return;
+    const totalWidth = window.innerWidth - 52;
+    const newTermWidth = ((window.innerWidth - e.clientX) / totalWidth) * 100;
+    setTerminalWidth(Math.min(70, Math.max(20, newTermWidth)));
+  }
+
+  function onMouseUp() {
+    isResizing.current = false;
+    document.body.style.cursor = "";
+    document.body.style.userSelect = "";
+    window.removeEventListener("mousemove", onMouseMove);
+    window.removeEventListener("mouseup", onMouseUp);
+  }
+
+  window.addEventListener("mousemove", onMouseMove);
+  window.addEventListener("mouseup", onMouseUp);
+}
+
   function handleRun() {
     const code = editorRef.current?.getValue() ?? "";
     submitCode(code, selectedLang.id, stdin);
@@ -744,7 +771,7 @@ export default function App() {
             </span>
           </div>
 
-          <div className="flex items-center gap-2 px-3 shrink-0">
+          <div className="flex items-center gap-2 px-3 mr-3 shrink-0">
             <button
               onClick={() => setShowStdin((v) => !v)}
               className="text-[13px] px-2.5 py-1 rounded transition-all duration-150 font-mono"
@@ -863,14 +890,41 @@ export default function App() {
         </div>
       </div>
 
+
+      <div
+  onMouseDown={handleResizerMouseDown}
+  className="shrink-0 flex items-center justify-center group"
+  style={{
+    width: "5px",
+    cursor: "col-resize",
+    background: BG.border,
+    transition: "background 0.15s",
+    position: "relative",
+  }}
+  onMouseEnter={(e) => (e.currentTarget.style.background = "#22d3ee50")}
+  onMouseLeave={(e) => (e.currentTarget.style.background = BG.border)}
+>
+
+  <div className="flex flex-col gap-1 pointer-events-none">
+    {[...Array(5)].map((_, i) => (
+      <div
+        key={i}
+        className="w-0.5 h-0.5 rounded-full"
+        style={{ background: "#3a3a55" }}
+      />
+    ))}
+  </div>
+</div>
+
       <div
         className="flex flex-col"
         style={{
-          width: "42%",
-          minWidth: "260px",
-          maxWidth: "560px",
+          width: `${terminalWidth}%`,
+          minWidth: "200px",
+          maxWidth: "75vw",
           background: BG.base,
           borderLeft: `1px solid ${BG.border}`,
+          flexShrink: 0,
         }}
       >
         <div
