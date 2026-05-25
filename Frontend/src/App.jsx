@@ -486,7 +486,7 @@ function VersionPopover({ group, selectedId, onSelect, onClose, topOffset }) {
                 onSelect(v);
                 onClose();
               }}
-              className="w-full text-left px-3 py-1.75 text-[11px] flex items-center justify-between transition-colors"
+              className="w-full text-left px-3 py-1.75 text-[12px] flex items-center justify-between transition-colors"
               style={{
                 background: isActive ? `${group.color}12` : "transparent",
                 color: isActive ? "#e2e8f0" : "#4a4a6a",
@@ -518,7 +518,7 @@ function VersionPopover({ group, selectedId, onSelect, onClose, topOffset }) {
 function TerminalOutput({ loading, error, output }) {
   const hasError = output?.stderr || output?.compile_output;
   return (
-    <div className="flex-1 overflow-auto p-5 font-mono text-[13px] leading-relaxed">
+    <div className="flex-1 overflow-auto p-5 font-mono text-[14px] leading-relaxed">
       <div className="flex items-center gap-2 mb-4">
         <span style={{ color: "#2a2a3e" }}>~</span>
         <span style={{ color: "#4a6fa5" }}>$</span>
@@ -676,7 +676,7 @@ export default function App() {
                   }}
                 >
                   <span
-                    className="text-[10px] font-black font-mono leading-none"
+                    className="text-[11px] font-black font-mono leading-none"
                     style={{ color: isActive ? group.color : "#ffffff" }}
                   >
                     {group.icon}
@@ -726,14 +726,14 @@ export default function App() {
               className="w-2 h-2 rounded-full shrink-0"
               style={{ background: activeGroup.color, opacity: 0.8 }}
             />
-            <span className="text-[11px]" style={{ color: "#7a7a99" }}>
+            <span className="text-[13px]" style={{ color: "#7a7a99" }}>
               {activeGroup.ext}
             </span>
           </div>
 
           <div className="px-3 flex-1 min-w-0 overflow-hidden flex items-center gap-2">
             <span
-              className="text-[10px] px-2 py-0.5 rounded font-mono"
+              className="text-[12px] px-2 py-0.5 rounded font-mono"
               style={{
                 color: activeGroup.color,
                 background: `${activeGroup.color}14`,
@@ -747,7 +747,7 @@ export default function App() {
           <div className="flex items-center gap-2 px-3 shrink-0">
             <button
               onClick={() => setShowStdin((v) => !v)}
-              className="text-[10px] px-2.5 py-1 rounded transition-all duration-150 font-mono"
+              className="text-[13px] px-2.5 py-1 rounded transition-all duration-150 font-mono"
               style={{
                 color: showStdin ? "#22d3ee" : "#94a3b8",
                 border: `1px solid ${showStdin ? "#22d3ee40" : "#94a3b830"}`,
@@ -772,7 +772,7 @@ export default function App() {
             <button
               onClick={handleRun}
               disabled={loading}
-              className="flex items-center gap-1.5 px-3 py-1 rounded text-[11px] font-bold transition-all duration-150 active:scale-95"
+              className="flex items-center gap-1.5 px-3 py-1 rounded text-[13px] font-bold transition-all duration-150 active:scale-95"
               style={{
                 background: loading ? "#1a1a28" : activeGroup.color,
                 color: loading ? "#2a2a40" : "#050510",
@@ -797,7 +797,7 @@ export default function App() {
             }}
           >
             <span
-              className="text-[9px] font-black tracking-[0.25em] uppercase shrink-0"
+              className="text-[11px] font-black tracking-[0.25em] uppercase shrink-0"
               style={{ color: activeGroup.color }}
             >
               stdin
@@ -846,7 +846,7 @@ export default function App() {
               monaco.editor.setTheme("mirror");
             }}
             options={{
-              fontSize: 14,
+              fontSize: 15,
               fontFamily:
                 '"Cascadia Code", "Fira Code", "JetBrains Mono", "Consolas", monospace',
               fontLigatures: true,
@@ -881,7 +881,7 @@ export default function App() {
           }}
         >
           <span
-            className="text-[10px] font-bold tracking-[0.25em] uppercase"
+            className="text-[13px] font-bold tracking-[0.25em] uppercase"
             style={{ color: "#94a3b8" }}
           >
             Terminal
