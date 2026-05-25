@@ -1,7 +1,7 @@
 import { useRef, useState, useEffect } from "react";
 import Editor from "@monaco-editor/react";
 import useCodeSubmit from "./hooks/useCodeSubmit";
-import mirrorLogo from "./assets/logo.svg"; 
+import mirrorLogo from "./assets/logo.svg";
 
 const ALL_LANGUAGES = [
   { id: 45, name: "Assembly (NASM 2.14.02)", monacoLang: "plaintext" },
@@ -581,32 +581,32 @@ export default function App() {
 
   const { output, loading, error, submitCode } = useCodeSubmit();
 
-const [terminalWidth, setTerminalWidth] = useState(42);
-const isResizing = useRef(false);
+  const [terminalWidth, setTerminalWidth] = useState(42);
+  const isResizing = useRef(false);
 
-function handleResizerMouseDown(e) {
-  isResizing.current = true;
-  document.body.style.cursor = "col-resize";
-  document.body.style.userSelect = "none";
+  function handleResizerMouseDown(e) {
+    isResizing.current = true;
+    document.body.style.cursor = "col-resize";
+    document.body.style.userSelect = "none";
 
-  function onMouseMove(e) {
-    if (!isResizing.current) return;
-    const totalWidth = window.innerWidth - 52;
-    const newTermWidth = ((window.innerWidth - e.clientX) / totalWidth) * 100;
-    setTerminalWidth(Math.min(70, Math.max(20, newTermWidth)));
+    function onMouseMove(e) {
+      if (!isResizing.current) return;
+      const totalWidth = window.innerWidth - 52;
+      const newTermWidth = ((window.innerWidth - e.clientX) / totalWidth) * 100;
+      setTerminalWidth(Math.min(70, Math.max(20, newTermWidth)));
+    }
+
+    function onMouseUp() {
+      isResizing.current = false;
+      document.body.style.cursor = "";
+      document.body.style.userSelect = "";
+      window.removeEventListener("mousemove", onMouseMove);
+      window.removeEventListener("mouseup", onMouseUp);
+    }
+
+    window.addEventListener("mousemove", onMouseMove);
+    window.addEventListener("mouseup", onMouseUp);
   }
-
-  function onMouseUp() {
-    isResizing.current = false;
-    document.body.style.cursor = "";
-    document.body.style.userSelect = "";
-    window.removeEventListener("mousemove", onMouseMove);
-    window.removeEventListener("mouseup", onMouseUp);
-  }
-
-  window.addEventListener("mousemove", onMouseMove);
-  window.addEventListener("mouseup", onMouseUp);
-}
 
   function handleRun() {
     const code = editorRef.current?.getValue() ?? "";
@@ -667,15 +667,15 @@ function handleResizerMouseDown(e) {
           style={{ borderBottom: `1px solid ${BG.border}` }}
         >
           <img
-  src={mirrorLogo}
-  alt="Mirror"
-  style={{
-  width: "28px",
-  height: "28px",
-  objectFit: "contain",
-  filter: "hue-rotate(10deg) saturate(1.4)",
-}}
-/>
+            src={mirrorLogo}
+            alt="Mirror"
+            style={{
+              width: "28px",
+              height: "28px",
+              objectFit: "contain",
+              filter: "hue-rotate(10deg) saturate(1.4)",
+            }}
+          />
         </div>
 
         <nav
@@ -895,31 +895,29 @@ function handleResizerMouseDown(e) {
         </div>
       </div>
 
-
       <div
-  onMouseDown={handleResizerMouseDown}
-  className="shrink-0 flex items-center justify-center group"
-  style={{
-    width: "5px",
-    cursor: "col-resize",
-    background: BG.border,
-    transition: "background 0.15s",
-    position: "relative",
-  }}
-  onMouseEnter={(e) => (e.currentTarget.style.background = "#22d3ee50")}
-  onMouseLeave={(e) => (e.currentTarget.style.background = BG.border)}
->
-
-  <div className="flex flex-col gap-1 pointer-events-none">
-    {[...Array(5)].map((_, i) => (
-      <div
-        key={i}
-        className="w-0.5 h-0.5 rounded-full"
-        style={{ background: "#3a3a55" }}
-      />
-    ))}
-  </div>
-</div>
+        onMouseDown={handleResizerMouseDown}
+        className="shrink-0 flex items-center justify-center group"
+        style={{
+          width: "5px",
+          cursor: "col-resize",
+          background: BG.border,
+          transition: "background 0.15s",
+          position: "relative",
+        }}
+        onMouseEnter={(e) => (e.currentTarget.style.background = "#22d3ee50")}
+        onMouseLeave={(e) => (e.currentTarget.style.background = BG.border)}
+      >
+        <div className="flex flex-col gap-1 pointer-events-none">
+          {[...Array(5)].map((_, i) => (
+            <div
+              key={i}
+              className="w-0.5 h-0.5 rounded-full"
+              style={{ background: "#3a3a55" }}
+            />
+          ))}
+        </div>
+      </div>
 
       <div
         className="flex flex-col"
