@@ -409,7 +409,7 @@ const SNIPPETS = {
   go: 'package main\n\nimport "fmt"\n\nfunc main() {\n    fmt.Println("chill and code.")\n}\n',
   rust: 'fn main() {\n    println!("chill and code.");\n}\n',
   r: 'cat("chill and code.\\n")\n',
-  php: '<?php\necho "chill and code.\\n";\n',
+  php: '<?php\necho "chill and code.\\n";\n?>',
   kotlin: 'fun main() {\n    println("chill and code.")\n}\n',
   scala:
     'object Main extends App {\n    println("chill and code.")\n}\n',
