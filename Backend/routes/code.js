@@ -39,7 +39,10 @@ router.post('/', async (req, res) => {
       ...result.data,
       stdout: cleanOutput(result.data.stdout),
       stderr: cleanOutput(result.data.stderr),
-      compile_output: cleanOutput(result.data.compile_output),
+      compile_output:
+    result.data.status?.id === 3
+      ? null
+      : cleanOutput(result.data.compile_output),
     }
 
         res.json(cleanedData)
