@@ -397,30 +397,30 @@ const LANG_GROUPS = [
 ];
 
 const SNIPPETS = {
-  c: '#include <stdio.h>\n\nint main() {\n    printf("Start small. Ship something.\\n");\n    return 0;\n}\n',
-  cpp: '#include <iostream>\nusing namespace std;\n\nint main() {\n    cout << "Start small. Ship something." << endl;\n    return 0;\n}\n',
+  c: '#include <stdio.h>\n\nint main() {\n    printf("chill and code.\\n");\n    return 0;\n}\n',
+  cpp: '#include <iostream>\nusing namespace std;\n\nint main() {\n    cout << "chill and code." << endl;\n    return 0;\n}\n',
   csharp:
-    'using System;\n\nclass Program {\n    static void Main() {\n        Console.WriteLine("Start small. Ship something.");\n    }\n}\n',
-  python: 'print("Start small. Ship something.")\n',
-  javascript: 'console.log("Start small. Ship something.");\n',
+    'using System;\n\nclass Program {\n    static void Main() {\n        Console.WriteLine("chill and code.");\n    }\n}\n',
+  python: 'print("chill and code.")\n',
+  javascript: 'console.log("chill and code.");\n',
   typescript:
-    'const msg: string = "Start small. Ship something.";\nconsole.log(msg);\n',
-  java: 'public class Main {\n    public static void main(String[] args) {\n        System.out.println("Start small. Ship something.");\n    }\n}\n',
-  go: 'package main\n\nimport "fmt"\n\nfunc main() {\n    fmt.Println("Start small. Ship something.")\n}\n',
-  rust: 'fn main() {\n    println!("Start small. Ship something.");\n}\n',
-  r: 'cat("Start small. Ship something.\\n")\n',
-  php: '<?php\necho "Start small. Ship something.\\n";\n',
-  kotlin: 'fun main() {\n    println("Start small. Ship something.")\n}\n',
+    'const msg: string = "chill and code.";\nconsole.log(msg);\n',
+  java: 'public class Main {\n    public static void main(String[] args) {\n        System.out.println("chill and code.");\n    }\n}\n',
+  go: 'package main\n\nimport "fmt"\n\nfunc main() {\n    fmt.Println("chill and code.")\n}\n',
+  rust: 'fn main() {\n    println!("chill and code.");\n}\n',
+  r: 'cat("chill and code.\\n")\n',
+  php: '<?php\necho "chill and code.\\n";\n',
+  kotlin: 'fun main() {\n    println("chill and code.")\n}\n',
   scala:
-    'object Main extends App {\n    println("Start small. Ship something.")\n}\n',
-  ruby: 'puts "Start small. Ship something."\n',
-  swift: 'print("Start small. Ship something.")\n',
-  shell: '#!/bin/bash\necho "Start small. Ship something."\n',
-  sql: '-- SQLite\nSELECT "Start small. Ship something." AS message;\n',
-  dart: 'void main() {\n  print("Start small. Ship something.");\n}\n',
-  lua: 'print("Start small. Ship something.")\n',
-  fsharp: 'printfn "Start small. Ship something."\n',
-  plaintext: "Start small. Ship something.\n",
+    'object Main extends App {\n    println("chill and code.")\n}\n',
+  ruby: 'puts "chill and code."\n',
+  swift: 'print("chill and code.")\n',
+  shell: '#!/bin/bash\necho "chill and code."\n',
+  sql: '-- SQLite\nSELECT "chill and code." AS message;\n',
+  dart: 'void main() {\n  print("chill and code.");\n}\n',
+  lua: 'print("chill and code.")\n',
+  fsharp: 'printfn "chill and code."\n',
+  plaintext: "chill and code.\n",
 };
 
 const BG = {
