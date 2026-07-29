@@ -429,7 +429,7 @@ const SNIPPETS = {
   D: 'import std.stdio;\n\nvoid main() {\n    writeln("chill and code.");\n}\n',
   Elixir: 'IO.puts "chill and code."\n',
   Erlang:
-    '-module(main).\n-export([main/0]).\n\nmain() ->\n    io:format("chill and code.~n").\n',
+    '-module(main).\n-export([main/1]).\n\nmain(_Args) ->\n    io:format("chill and code.~n").\n',
   Fortran: "program main\n    print *, 'chill and code.'\nend program main\n",
   Prolog:
     ":- initialization(main).\n\nmain :-\n    write('chill and code.'), nl.\n",
