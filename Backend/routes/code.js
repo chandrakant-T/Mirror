@@ -40,7 +40,7 @@ router.post('/', async (req, res) => {
       stderr: cleanOutput(result.data.stderr),
     }
 
-        res.json(result.data)
+        res.json(cleanedData)
 
     } catch (err) {
         res.status(500).json({ error: err.message })
