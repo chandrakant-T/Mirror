@@ -34,10 +34,12 @@ router.post('/', async (req, res) => {
             { headers: { "Content-Type": "application/json" } }
         )
 
+
         const cleanedData = {
       ...result.data,
       stdout: cleanOutput(result.data.stdout),
       stderr: cleanOutput(result.data.stderr),
+      compile_output: cleanOutput(result.data.compile_output),
     }
 
         res.json(cleanedData)
