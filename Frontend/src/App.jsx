@@ -397,30 +397,50 @@ const LANG_GROUPS = [
 ];
 
 const SNIPPETS = {
-  c: '#include <stdio.h>\n\nint main() {\n    printf("chill and code.\\n");\n    return 0;\n}\n',
-  cpp: '#include <iostream>\nusing namespace std;\n\nint main() {\n    cout << "chill and code." << endl;\n    return 0;\n}\n',
-  csharp:
-    'using System;\n\nclass Program {\n    static void Main() {\n        Console.WriteLine("chill and code.");\n    }\n}\n',
-  python: 'print("chill and code.")\n',
-  javascript: 'console.log("chill and code.");\n',
-  typescript:
-    'const msg: string = "chill and code.";\nconsole.log(msg);\n',
-  java: 'public class Main {\n    public static void main(String[] args) {\n        System.out.println("chill and code.");\n    }\n}\n',
-  go: 'package main\n\nimport "fmt"\n\nfunc main() {\n    fmt.Println("chill and code.")\n}\n',
-  rust: 'fn main() {\n    println!("chill and code.");\n}\n',
-  r: 'cat("chill and code.\\n")\n',
-  php: '<?php\necho "chill and code.\\n";\n?>',
-  kotlin: 'fun main() {\n    println("chill and code.")\n}\n',
-  scala:
-    'object Main extends App {\n    println("chill and code.")\n}\n',
-  ruby: 'puts "chill and code."\n',
-  swift: 'print("chill and code.")\n',
-  shell: '#!/bin/bash\necho "chill and code."\n',
-  sql: '-- SQLite\nSELECT "chill and code." AS message;\n',
-  dart: 'void main() {\n  print("chill and code.");\n}\n',
-  lua: 'print("chill and code.")\n',
-  fsharp: 'printfn "chill and code."\n',
-  plaintext: "chill and code.\n",
+  C: '#include <stdio.h>\n\nint main() {\n    printf("chill and code.\\n");\n    return 0;\n}\n',
+  "C++": '#include <iostream>\nusing namespace std;\n\nint main() {\n    cout << "chill and code." << endl;\n    return 0;\n}\n',
+  "C#": 'using System;\n\nclass Program {\n    static void Main() {\n        Console.WriteLine("chill and code.");\n    }\n}\n',
+  Python: 'print("chill and code.")\n',
+  JS: 'console.log("chill and code.");\n',
+  TS: 'const msg: string = "chill and code.";\nconsole.log(msg);\n',
+  Java: 'public class Main {\n    public static void main(String[] args) {\n        System.out.println("chill and code.");\n    }\n}\n',
+  Go: 'package main\n\nimport "fmt"\n\nfunc main() {\n    fmt.Println("chill and code.")\n}\n',
+  Rust: 'fn main() {\n    println!("chill and code.");\n}\n',
+  R: 'cat("chill and code.\\n")\n',
+  PHP: '<?php\necho "chill and code.\\n";\n?>',
+  Kotlin: 'fun main() {\n    println("chill and code.")\n}\n',
+  Scala: 'object Main extends App {\n    println("chill and code.")\n}\n',
+  Ruby: 'puts "chill and code."\n',
+  Swift: 'print("chill and code.")\n',
+  Bash: '#!/bin/bash\necho "chill and code."\n',
+  SQL: '-- SQLite\nSELECT "chill and code." AS message;\n',
+  Dart: 'void main() {\n  print("chill and code.");\n}\n',
+  Lua: 'print("chill and code.")\n',
+  Haskell: 'main :: IO ()\nmain = do\n  putStrLn ("Chill and code.")',
+  "F#": 'printfn "chill and code."\n',
+  Text: "chill and code.\n",
+  OCaml: 'let () = print_endline "chill and code."\n',
+  Perl: 'print "chill and code.\\n";\n',
+  Clojure: '(println "chill and code.")\n',
+  Groovy: 'println "chill and code."\n',
+  Pascal: 'program Main;\nbegin\n  writeln(\'chill and code.\');\nend.\n',
+  ObjC:
+    '#import <Foundation/Foundation.h>\n\nint main() {\n    @autoreleasepool {\n        NSLog(@"chill and code.");\n    }\n    return 0;\n}\n',
+  D: 'import std.stdio;\n\nvoid main() {\n    writeln("chill and code.");\n}\n',
+  Elixir: 'IO.puts "chill and code."\n',
+  Erlang:
+    '-module(main).\n-export([main/0]).\n\nmain() ->\n    io:format("chill and code.~n").\n',
+  Fortran: "program main\n    print *, 'chill and code.'\nend program main\n",
+  Prolog:
+    ":- initialization(main).\n\nmain :-\n    write('chill and code.'), nl.\n",
+  Octave: 'disp("chill and code.")\n',
+  Asm:
+    "section .data\n    msg db \"chill and code.\", 0xA\n    len equ $ - msg\n\nsection .text\n    global _start\n\n_start:\n    mov eax, 4\n    mov ebx, 1\n    mov ecx, msg\n    mov edx, len\n    int 0x80\n\n    mov eax, 1\n    xor ebx, ebx\n    int 0x80\n",
+  VB: 'Module Program\n    Sub Main()\n        Console.WriteLine("chill and code.")\n    End Sub\nEnd Module\n',
+  COBOL:
+    '       IDENTIFICATION DIVISION.\n       PROGRAM-ID. MAIN.\n       PROCEDURE DIVISION.\n           DISPLAY "chill and code.".\n           STOP RUN.\n',
+  Lisp: '(format t "chill and code.~%")\n',
+  Basic: 'PRINT "chill and code."\n',
 };
 
 const BG = {
@@ -629,10 +649,10 @@ export default function App() {
   }
 
   function activateGroup(group, lang) {
-    setActiveGroup(group);
-    setSelectedLang(lang);
-    editorRef.current?.setValue(SNIPPETS[lang.monacoLang] ?? "");
-  }
+  setActiveGroup(group);
+  setSelectedLang(lang);
+  editorRef.current?.setValue(SNIPPETS[group.label] ?? "");
+}
 
   function handleVersionSelect(lang) {
     const group = LANG_GROUPS.find((g) =>
@@ -857,7 +877,7 @@ export default function App() {
           <Editor
             height="100%"
             language={selectedLang.monacoLang}
-            defaultValue={SNIPPETS[selectedLang.monacoLang] ?? ""}
+            defaultValue={SNIPPETS[activeGroup.label] ?? ""}
             theme="vs-dark"
             onMount={(editor, monaco) => {
               editorRef.current = editor;
