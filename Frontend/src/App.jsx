@@ -452,6 +452,51 @@ const BG = {
   borderHi: "#2a2a3e",
 };
 
+const MOBILE_BREAKPOINT = 768;
+
+// --- persistence helpers ---
+const STORAGE_PREFIX = "mirror:code:";
+const LAST_GROUP_KEY = "mirror:lastGroup";
+
+function readSavedCode(groupLabel) {
+  try {
+    return localStorage.getItem(STORAGE_PREFIX + groupLabel);
+  } catch {
+    return null;
+  }
+}
+
+function writeSavedCode(groupLabel, value) {
+  try {
+    localStorage.setItem(STORAGE_PREFIX + groupLabel, value ?? "");
+  } catch {}
+}
+
+function readLastGroupLabel() {
+  try {
+    return localStorage.getItem(LAST_GROUP_KEY);
+  } catch {
+    return null;
+  }
+}
+
+function writeLastGroupLabel(label) {
+  try {
+    localStorage.setItem(LAST_GROUP_KEY, label);
+  } catch {}
+}
+
+function getInitialGroup() {
+  const lastLabel = readLastGroupLabel();
+  const found = lastLabel && LANG_GROUPS.find((g) => g.label === lastLabel);
+  return found || LANG_GROUPS[0];
+}
+
+function getInitialLang(group) {
+  return ALL_LANGUAGES.find((l) => l.id === group.defaultId);
+}
+// --- end persistence helpers ---
+
 function VersionPopover({ group, selectedId, onSelect, onClose, topOffset }) {
   useEffect(() => {
     const handler = (e) => {
@@ -586,14 +631,50 @@ function TerminalOutput({ loading, error, output }) {
   );
 }
 
+function TerminalHeader() {
+  return (
+    <div
+      className="h-9 flex items-center px-4 shrink-0"
+      style={{
+        background: BG.surface3,
+        borderBottom: `1px solid ${BG.border}`,
+      }}
+    >
+      <span
+        className="text-[13px] font-bold tracking-[0.25em] uppercase"
+        style={{ color: "#94a3b8" }}
+      >
+        Terminal
+      </span>
+
+      <div className="ml-auto flex gap-1.5">
+        {["#ff5f57", "#febc2e", "#28c840"].map((c, i) => (
+          <div
+            key={i}
+            className="w-2.5 h-2.5 rounded-full cursor-pointer transition-all"
+            style={{ background: c, opacity: 0.5 }}
+            onMouseEnter={(e) => (e.currentTarget.style.opacity = "1")}
+            onMouseLeave={(e) => (e.currentTarget.style.opacity = "0.5")}
+          />
+        ))}
+      </div>
+    </div>
+  );
+}
+
 export default function App() {
   const editorRef = useRef(null);
   const btnRefs = useRef({});
+  const saveTimeout = useRef(null);
 
-  const [activeGroup, setActiveGroup] = useState(LANG_GROUPS[0]);
-  const [selectedLang, setSelectedLang] = useState(
-    ALL_LANGUAGES.find((l) => l.id === LANG_GROUPS[0].defaultId),
+  const [activeGroup, setActiveGroup] = useState(() => getInitialGroup());
+  const [selectedLang, setSelectedLang] = useState(() =>
+    getInitialLang(getInitialGroup()),
   );
+
+  const activeGroupRef = useRef(activeGroup);
+  const suppressSaveRef = useRef(false);
+
   const [popoverGroup, setPopoverGroup] = useState(null);
   const [popoverTop, setPopoverTop] = useState(0);
   const [stdin, setStdin] = useState("");
@@ -603,6 +684,29 @@ export default function App() {
 
   const [terminalWidth, setTerminalWidth] = useState(42);
   const isResizing = useRef(false);
+
+  // --- mobile layout state ---
+  const [isMobile, setIsMobile] = useState(
+    () => typeof window !== "undefined" && window.innerWidth < MOBILE_BREAKPOINT,
+  );
+  const [mobileTab, setMobileTab] = useState("code"); // "code" | "terminal"
+
+  useEffect(() => {
+    function handleResize() {
+      setIsMobile(window.innerWidth < MOBILE_BREAKPOINT);
+    }
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
+  // Monaco caches its container size; when we un-hide it after a tab
+  // switch, force it to re-measure so it doesn't render squished/blank.
+  useEffect(() => {
+    if (isMobile && mobileTab === "code") {
+      requestAnimationFrame(() => editorRef.current?.layout());
+    }
+  }, [isMobile, mobileTab]);
+  // --- end mobile layout state ---
 
   function handleResizerMouseDown(e) {
     isResizing.current = true;
@@ -631,6 +735,9 @@ export default function App() {
   function handleRun() {
     const code = editorRef.current?.getValue() ?? "";
     submitCode(code, selectedLang.id, stdin);
+    // On mobile, jump to the terminal tab so the user sees output
+    // without needing to switch manually.
+    if (isMobile) setMobileTab("terminal");
   }
 
   function handleGroupClick(group) {
@@ -649,16 +756,33 @@ export default function App() {
   }
 
   function activateGroup(group, lang) {
-  setActiveGroup(group);
-  setSelectedLang(lang);
-  editorRef.current?.setValue(SNIPPETS[group.label] ?? "");
-}
+    setActiveGroup(group);
+    setSelectedLang(lang);
+    activeGroupRef.current = group;
+    writeLastGroupLabel(group.label);
+
+    const saved = readSavedCode(group.label);
+
+    suppressSaveRef.current = true;
+    editorRef.current?.setValue(saved ?? SNIPPETS[group.label] ?? "");
+    queueMicrotask(() => {
+      suppressSaveRef.current = false;
+    });
+  }
 
   function handleVersionSelect(lang) {
     const group = LANG_GROUPS.find((g) =>
       g.versions.some((v) => v.id === lang.id),
     );
     if (group) activateGroup(group, lang);
+  }
+
+  function handleEditorChange(value) {
+    if (suppressSaveRef.current) return;
+    clearTimeout(saveTimeout.current);
+    saveTimeout.current = setTimeout(() => {
+      writeSavedCode(activeGroupRef.current.label, value);
+    }, 500);
   }
 
   useEffect(() => {
@@ -783,9 +907,9 @@ export default function App() {
             </span>
           </div>
 
-          <div className="px-3 flex-1 min-w-0 overflow-hidden flex items-center gap-2">
+          <div className="px-3 flex-1 min-w-0 overflow-hidden flex items-center gap-3">
             <span
-              className="text-[12px] px-2 py-0.5 rounded font-mono"
+              className="text-[12px] px-2 py-0.5 rounded font-mono shrink-0"
               style={{
                 color: activeGroup.color,
                 background: `${activeGroup.color}14`,
@@ -793,6 +917,10 @@ export default function App() {
               }}
             >
               {selectedLang.name}
+            </span>
+
+            <span className="text-[11px] truncate" style={{ color: activeGroup.color }}>
+              Chill and code — 40+ languages, right in your browser.
             </span>
           </div>
 
@@ -840,7 +968,48 @@ export default function App() {
           </div>
         </div>
 
-        {showStdin && (
+        {isMobile && (
+          <div
+            className="h-8 flex shrink-0"
+            style={{
+              background: BG.surface2,
+              borderBottom: `1px solid ${BG.border}`,
+            }}
+          >
+            <button
+              onClick={() => setMobileTab("code")}
+              className="flex-1 text-[12px] font-bold transition-colors"
+              style={{
+                color: mobileTab === "code" ? activeGroup.color : "#4a4a6a",
+                borderBottom:
+                  mobileTab === "code"
+                    ? `2px solid ${activeGroup.color}`
+                    : "2px solid transparent",
+                background:
+                  mobileTab === "code" ? `${activeGroup.color}0d` : "transparent",
+              }}
+            >
+              Code
+            </button>
+            <button
+              onClick={() => setMobileTab("terminal")}
+              className="flex-1 text-[12px] font-bold transition-colors"
+              style={{
+                color: mobileTab === "terminal" ? "#22d3ee" : "#4a4a6a",
+                borderBottom:
+                  mobileTab === "terminal"
+                    ? "2px solid #22d3ee"
+                    : "2px solid transparent",
+                background:
+                  mobileTab === "terminal" ? "#22d3ee0d" : "transparent",
+              }}
+            >
+              Terminal
+            </button>
+          </div>
+        )}
+
+        {showStdin && (!isMobile || mobileTab === "code") && (
           <div
             className="px-4 py-2 shrink-0 flex items-center gap-3"
             style={{
@@ -873,12 +1042,22 @@ export default function App() {
           </div>
         )}
 
-        <div className="flex-1 min-h-0">
+        <div
+          className="flex-1 min-h-0"
+          style={{
+            display: isMobile && mobileTab !== "code" ? "none" : "block",
+          }}
+        >
           <Editor
             height="100%"
             language={selectedLang.monacoLang}
-            defaultValue={SNIPPETS[activeGroup.label] ?? ""}
+            defaultValue={
+              readSavedCode(activeGroup.label) ??
+              SNIPPETS[activeGroup.label] ??
+              ""
+            }
             theme="vs-dark"
+            onChange={handleEditorChange}
             onMount={(editor, monaco) => {
               editorRef.current = editor;
 
@@ -896,6 +1075,13 @@ export default function App() {
                 },
               });
               monaco.editor.setTheme("mirror");
+
+              suppressSaveRef.current = true;
+              const saved = readSavedCode(activeGroupRef.current.label);
+              if (saved !== null) editor.setValue(saved);
+              queueMicrotask(() => {
+                suppressSaveRef.current = false;
+              });
             }}
             options={{
               fontSize: 15,
@@ -913,72 +1099,57 @@ export default function App() {
             }}
           />
         </div>
+
+        {isMobile && mobileTab === "terminal" && (
+          <div className="flex-1 min-h-0 flex flex-col">
+            <TerminalHeader />
+            <TerminalOutput loading={loading} error={error} output={output} />
+          </div>
+        )}
       </div>
 
-      <div
-        onMouseDown={handleResizerMouseDown}
-        className="shrink-0 flex items-center justify-center group"
-        style={{
-          width: "5px",
-          cursor: "col-resize",
-          background: BG.border,
-          transition: "background 0.15s",
-          position: "relative",
-        }}
-        onMouseEnter={(e) => (e.currentTarget.style.background = "#22d3ee50")}
-        onMouseLeave={(e) => (e.currentTarget.style.background = BG.border)}
-      >
-        <div className="flex flex-col gap-1 pointer-events-none">
-          {[...Array(5)].map((_, i) => (
-            <div
-              key={i}
-              className="w-0.5 h-0.5 rounded-full"
-              style={{ background: "#3a3a55" }}
-            />
-          ))}
-        </div>
-      </div>
-
-      <div
-        className="flex flex-col"
-        style={{
-          width: `${terminalWidth}%`,
-          minWidth: "200px",
-          maxWidth: "75vw",
-          background: BG.base,
-          borderLeft: `1px solid ${BG.border}`,
-          flexShrink: 0,
-        }}
-      >
+      {!isMobile && (
         <div
-          className="h-9 flex items-center px-4 shrink-0"
+          onMouseDown={handleResizerMouseDown}
+          className="shrink-0 flex items-center justify-center group"
           style={{
-            background: BG.surface3,
-            borderBottom: `1px solid ${BG.border}`,
+            width: "5px",
+            cursor: "col-resize",
+            background: BG.border,
+            transition: "background 0.15s",
+            position: "relative",
           }}
+          onMouseEnter={(e) => (e.currentTarget.style.background = "#22d3ee50")}
+          onMouseLeave={(e) => (e.currentTarget.style.background = BG.border)}
         >
-          <span
-            className="text-[13px] font-bold tracking-[0.25em] uppercase"
-            style={{ color: "#94a3b8" }}
-          >
-            Terminal
-          </span>
-
-          <div className="ml-auto flex gap-1.5">
-            {["#ff5f57", "#febc2e", "#28c840"].map((c, i) => (
+          <div className="flex flex-col gap-1 pointer-events-none">
+            {[...Array(5)].map((_, i) => (
               <div
                 key={i}
-                className="w-2.5 h-2.5 rounded-full cursor-pointer transition-all"
-                style={{ background: c, opacity: 0.5 }}
-                onMouseEnter={(e) => (e.currentTarget.style.opacity = "1")}
-                onMouseLeave={(e) => (e.currentTarget.style.opacity = "0.5")}
+                className="w-0.5 h-0.5 rounded-full"
+                style={{ background: "#3a3a55" }}
               />
             ))}
           </div>
         </div>
+      )}
 
-        <TerminalOutput loading={loading} error={error} output={output} />
-      </div>
+      {!isMobile && (
+        <div
+          className="flex flex-col"
+          style={{
+            width: `${terminalWidth}%`,
+            minWidth: "200px",
+            maxWidth: "75vw",
+            background: BG.base,
+            borderLeft: `1px solid ${BG.border}`,
+            flexShrink: 0,
+          }}
+        >
+          <TerminalHeader />
+          <TerminalOutput loading={loading} error={error} output={output} />
+        </div>
+      )}
     </div>
   );
 }
