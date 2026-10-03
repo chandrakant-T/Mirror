@@ -23,7 +23,7 @@ app.get('/', (req, res) => {
 
 // For Health check
 app.get('/health',(req,res)=>{
-	res.status(200).send('OK');
+	res.json({message: "Woking"});
 });
 
 app.use('/languages', languagesRouter);
