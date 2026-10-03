@@ -21,6 +21,11 @@ app.get('/', (req, res) => {
     res.send("Welcome to Mirror Compiler");
 });
 
+// For Health check
+app.get('/health',(req,res)=>{
+	res.status(200).send('OK');
+});
+
 app.use('/languages', languagesRouter);
 app.use('/code-submit', codeRouter);
 
